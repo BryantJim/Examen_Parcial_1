@@ -1,0 +1,134 @@
+@page "/RegistroNcfAutorizado"
+
+@inject IToastService Toast
+
+<EditForm Model="NCFAutorizado" OnValidSubmit="Guardar">
+	<DataAnnotationsValidator/>
+    <div class="container shadow-lg p-3 rb-5 bg-white rounded col-md-12">	
+		<div class="card">
+			<div class="card-header">
+				<h3>Registro de NCFAutorizados</h3>
+			</div>
+			
+			<div class="card-body">
+				<div class="form-group">
+					<label>NCFId</label>					
+					<div class="input-group">
+						<InputNumber @bind-Value="NCFAutorizado.NcfId" class="form-control"/>
+						<div class="input-group-append">
+							<button type="button" class="btn btn-primary input-group-text" @onclick="Buscar">Buscar</button>
+						</div>
+					</div>	
+				</div>
+
+				<div class="form-group">
+					<label>TipoNCFId</label>
+					<InputNumber @bind-Value="NCFAutorizado.TipoNcfId" class="form-control"/>
+					<ValidationMessage For="@(() => NCFAutorizado.TipoNcfId)"/>
+				</div>
+
+                <div class="form-group">
+					<label>Secuencia</label>
+					<InputNumber @bind-Value="NCFAutorizado.Secuencia" class="form-control"/>
+					<ValidationMessage For="@(() => NCFAutorizado.Secuencia)"/>
+				</div>
+
+                <div class="form-group">
+					<label>Limite</label>
+					<InputNumber @bind-Value="NCFAutorizado.Limite" class="form-control"/>
+					<ValidationMessage For="@(() => NCFAutorizado.Limite)"/>
+				</div>
+
+                <div class="form-group">
+					<label>Reorden</label>
+					<InputNumber @bind-Value="NCFAutorizado.Reorden" class="form-control"/>
+					<ValidationMessage For="@(() => NCFAutorizado.Reorden)"/>
+				</div>
+
+				<div class="form-group">
+					<label>Fecha de Vencimiento</label>
+					<InputDate @bind-Value="NCFAutorizado.Vence" class="form-control"/>
+					<ValidationMessage For="@(() => NCFAutorizado.Vence)"/>
+				</div>            	
+				
+                
+				
+                	                    <!--Buttons--->
+				
+                	<div class="form-group text-center" display: inline-block>
+					<div class="btn-group mr-5" role="group" aria-label="First group">
+						<button type="button" class="btn btn-outline-secondary" @onclick="Nuevo">Nuevo</button>
+					</div>
+						<div class="btn-group mr-5" role="group" aria-label="Second group">
+						<button type="submit" class="btn btn-outline-success">Guardar</button>
+					</div>
+					
+					<div class="btn-group" role="group" aria-label="Third group">
+						<button type="button" class="btn btn-outline-danger" @onclick="Eliminar">Eliminar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</EditForm>
+
+@code{
+   private NCFAutorizados NCFAutorizado = new NCFAutorizados();
+
+    //[Parameter] public int #Id { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Nuevo();
+    }
+
+    private void Nuevo()
+    {
+        NCFAutorizado = new NCFAutorizados();
+    }
+
+    private void Guardar()
+    {
+        bool guardado;
+
+        guardado = NCFAutorizadosBLL.Guardar(NCFAutorizado);
+
+        if (guardado)
+        {
+            Nuevo();
+            Toast.ShowSuccess("Se ha Guardado Exitosamente");
+        }
+        else
+            Toast.ShowError("Error, no se pudo Guardar");
+    }
+
+    private void Buscar()
+    {
+         if (NCFAutorizado.NcfId > 0)
+         {
+             var encontrado = NCFAutorizadosBLL.Buscar(NCFAutorizado.NcfId);
+             if (encontrado != null)
+             {
+                 NCFAutorizado = encontrado;
+				 Toast.ShowSuccess("Se ha Enconrado la Persona");
+			 }
+             else
+                 Toast.ShowWarning("No se pudo localizar la Persona indicada");
+         }       
+    }
+
+    private void Eliminar()
+    {
+        bool elimino;
+
+        elimino = NCFAutorizadosBLL.Eliminar(NCFAutorizado.NcfId);
+
+        if (elimino)
+        {
+            Nuevo();
+            Toast.ShowSuccess("Se ha Eliminado Exitosamente");
+        }
+        else
+            Toast.ShowError("No se pudo localizar la Persona indicada");     
+    }
+}
